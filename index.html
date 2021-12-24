@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head><title>Socket.IO chat</title>
+    <style>
+        body {
+            background-color: black;
+        }
+
+        #canvas {
+            background-color: gray;
+        }
+
+        .centerHorizontal{
+            margin: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<canvas class="centerHorizontal" id="canvas" width="900" height="600"></canvas>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io("http://127.0.0.1:3000");
+    var canvasContext;
+    var canvas;
+
+    socket.on('mouseMove', function(point) {
+       console.log("Other client is moving at: " + point.x + ":" + point.y);
+        canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+        canvasContext.fillRect(point.x, point.y, 20, 20);
+    });
+
+    window.onload = function () {
+        canvas = document.getElementById("canvas");
+        canvasContext = canvas.getContext("2d");
+        canvasContext.fillStyle = "yellow";
+
+        canvas.addEventListener('mousemove', function(event) {
+            socket.emit('mousemove', {x:event.offsetX, y: event.offsetY});
+        });
+    }
+</script>
+</body>
+</html>
